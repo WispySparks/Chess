@@ -22,6 +22,43 @@ void Board::newGame() {
     }
 }
 
+void Board::movePiece(std::string start, std::string end) {
+    int startCol = convertFile(start.at(0));
+    int startRow = convertRank(start.at(1));
+    int endCol = convertFile(end.at(0));
+    int endRow = convertRank(end.at(1));
+    Piece piece = board[startRow][startCol];
+    std::cout << piece.getName() << "\n";
+    std::vector<int> legalMoves = piece.getLegalMoves(startCol, startRow);
+    for (auto i: legalMoves) {
+        std::cout << i << ' ';
+    }
+    std::cout << "\n";
+    bool legalMove = false;
+    for (int i = 0; i < legalMoves.size(); i += 2) {
+        int legalCol = legalMoves.at(i);
+        int legalRow = legalMoves.at(i+1);
+        if (endCol == legalCol && endRow == legalRow) {
+            legalMove = true;
+        }
+    }
+    if (legalMove) {
+        piece.registerMove();
+        board[endRow][endCol] = piece;
+        board[startRow][startCol] = Empty();
+    } else {
+        std::cout << "Illegal Move!\n";
+    }
+}
+
+int Board::convertFile(char c) {
+    return c - 'a';
+}
+
+int Board::convertRank(char c) {
+    return c - '0' - 1;
+}
+
 void Board::printBoard() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -29,4 +66,21 @@ void Board::printBoard() {
         }
         std::cout << "\n";
     }
+}
+
+void Board::printBoardWithNotation() {
+    std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (j == 0) {
+                std::cout << (8-i) << " ";
+            }
+            std::cout << board[i][j].getName() << " ";
+            if (j == 7) {
+                std::cout << (8-i) << " ";
+            }
+        }
+        std::cout << "\n";
+    }
+    std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
 }

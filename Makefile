@@ -1,2 +1,2 @@
 main:
-	g++ src/main.cpp src/board.cpp -o main
+	g++ src/main.cpp src/board.cpp src/piece.cpp -o main
