@@ -4,8 +4,10 @@
 #include <iostream>
 #include <vector>
 #include "piece.hpp"
-
+    
+// Pointers because object slicing
 class Board {
+    // Row, Column
     Piece* board[8][8];
     public:
         void newGame();
@@ -13,8 +15,9 @@ class Board {
         void printBoard();
         void printBoardWithNotation();
     private:
-        int convertFile(char c);
-        int convertRank(char c);
+        bool checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow);
+        int fileToColumnIndex(char c);
+        int rankToRowIndex(char c);
 }; 
 
 #endif

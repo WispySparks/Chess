@@ -8,42 +8,32 @@ void Board::newGame() {
         }
     }
     for (int i = 0; i < 8; i += 7) {
-        board[i][0] = new Rook();
-        board[i][1] = new Knight();
-        board[i][2] = new Bishop();
-        board[i][3] = new Queen();
-        board[i][4] = new King();
-        board[i][5] = new Bishop();
-        board[i][6] = new Knight();
-        board[i][7] = new Rook();
+        Team team = (i == 0) ? Team::Black : Team::White;
+        board[i][0] = new Rook(team);
+        board[i][1] = new Knight(team);
+        board[i][2] = new Bishop(team);
+        board[i][3] = new Queen(team);
+        board[i][4] = new King(team);
+        board[i][5] = new Bishop(team);
+        board[i][6] = new Knight(team);
+        board[i][7] = new Rook(team);
     }
     for (int i = 0; i < 8; i++) {
-        board[1][i] = new Pawn();
-        board[6][i] = new Pawn();
+        board[1][i] = new Pawn(Team::Black);
+        board[6][i] = new Pawn(Team::White);
     }
 }
 
 void Board::movePiece(std::string start, std::string end) {
-    int startCol = convertFile(start.at(0));
-    int startRow = convertRank(start.at(1));
-    int endCol = convertFile(end.at(0));
-    int endRow = convertRank(end.at(1));
+    int startCol = fileToColumnIndex(start.at(0));
+    int startRow = rankToRowIndex(start.at(1));
+    int endCol = fileToColumnIndex(end.at(0));
+    int endRow = rankToRowIndex(end.at(1));
     Piece* piece = board[startRow][startCol];
-    std::cout << "Getting legal moves for " << piece->getName() << "\n";
-    std::vector<int> legalMoves = piece->getLegalMoves(startCol, startRow);
-    for (auto i: legalMoves) {
-        std::cout << i << ' ';
-    }
-    std::cout << "\n";
-    bool legalMove = false;
-    for (int i = 0; i < legalMoves.size(); i += 2) {
-        int legalCol = legalMoves.at(i);
-        int legalRow = legalMoves.at(i+1);
-        if (endCol == legalCol && endRow == legalRow) {
-            legalMove = true;
-        }
-    }
-    if (legalMove) {
+    // Stored as column, row, column, row, etc
+    std::vector<int> moves = piece->getMoves(startCol, startRow);
+    // std::cout << "Getting moves for " << piece->getName() << ".\n";
+    if (checkMoveLegality(piece, moves, endCol, endRow)) {
         piece->registerMove();
         board[endRow][endCol] = piece;
         board[startRow][startCol] = new Empty();
@@ -52,12 +42,28 @@ void Board::movePiece(std::string start, std::string end) {
     }
 }
 
-int Board::convertFile(char c) {
+bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow) {
+    Piece* endPiece = board[endRow][endCol];
+    if (startPiece->getTeam() != Team::White) return false;
+    if (startPiece->getTeam() == endPiece->getTeam()) return false;
+    bool legalMove = false;
+    for (int i = 0; i < pieceMoves.size(); i += 2) {
+        int column = pieceMoves.at(i);
+        int row = pieceMoves.at(i+1);
+        if (endCol == column && endRow == row) {
+            legalMove = true;
+        }
+    }
+    return legalMove;
+}
+
+int Board::fileToColumnIndex(char c) {
     return c - 'a';
 }
 
-int Board::convertRank(char c) {
-    return c - '1';
+int Board::rankToRowIndex(char c) {
+    // flip index as player is the bottom pieces
+    return 7 - (c - '1');
 }
 
 void Board::printBoard() {
