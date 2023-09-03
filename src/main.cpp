@@ -19,6 +19,10 @@ int main(int argc, char* argv[]) {
         }
         std::string startPos = input.substr(0, 2);
         std::string endPos = input.substr(2, 2);
+        if (startPos == endPos) {
+            std::cout << "Invalid Move";
+            continue;
+        }
         board.movePiece(startPos, endPos);
         board.printBoardWithNotation();
     }

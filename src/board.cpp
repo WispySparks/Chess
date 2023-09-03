@@ -44,7 +44,7 @@ void Board::movePiece(std::string start, std::string end) {
 
 bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow) {
     Piece* endPiece = board[endRow][endCol];
-    if (startPiece->getTeam() != Team::White) return false;
+    if (startPiece->getTeam() != Team::White) return false; //! Change later
     if (startPiece->getTeam() == endPiece->getTeam()) return false;
     bool legalMove = false;
     for (int i = 0; i < pieceMoves.size(); i += 2) {
@@ -76,6 +76,7 @@ void Board::printBoard() {
 }
 
 void Board::printBoardWithNotation() {
+    // std::cout << "\033[35m HI \033[0m\n";
     std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
