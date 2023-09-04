@@ -18,6 +18,7 @@ class Board {
         bool checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow);
         int fileToColumnIndex(char c);
         int rankToRowIndex(char c);
+        void applyColor(std::string* str, int color);
 }; 
 
 #endif

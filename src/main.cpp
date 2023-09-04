@@ -24,7 +24,6 @@ int main(int argc, char* argv[]) {
             continue;
         }
         board.movePiece(startPos, endPos);
-        board.printBoardWithNotation();
     }
     std::cout << "--- END PROGRAM ---";
     return 0;

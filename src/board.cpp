@@ -1,4 +1,5 @@
 #include "board.hpp"
+#include <string>
 
 void Board::newGame() {
     // Have to use 'new' so that the objects are created on the heap and I can have pointers to them.
@@ -37,6 +38,7 @@ void Board::movePiece(std::string start, std::string end) {
         piece->registerMove();
         board[endRow][endCol] = piece;
         board[startRow][startCol] = new Empty();
+        printBoardWithNotation();
     } else {
         std::cout << "Illegal Move!\n";
     }
@@ -50,6 +52,7 @@ bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, in
     for (int i = 0; i < pieceMoves.size(); i += 2) {
         int column = pieceMoves.at(i);
         int row = pieceMoves.at(i+1);
+        // std::cout << column << ", " << row << "\n";
         if (endCol == column && endRow == row) {
             legalMove = true;
         }
@@ -76,14 +79,16 @@ void Board::printBoard() {
 }
 
 void Board::printBoardWithNotation() {
-    // std::cout << "\033[35m HI \033[0m\n";
     std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (j == 0) {
                 std::cout << (8-i) << " ";
             }
-            std::cout << board[i][j]->getName() << " ";
+            std::string str; 
+            str += board[i][j]->getName();
+            if (board[i][j]->getTeam() == Team::Black) applyColor(&str, 34);
+            std::cout << str << " ";
             if (j == 7) {
                 std::cout << (8-i) << " ";
             }
@@ -91,4 +96,10 @@ void Board::printBoardWithNotation() {
         std::cout << "\n";
     }
     std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
+}
+
+void Board::applyColor(std::string* str, int color) {
+    std::string s = "\033[" + std::to_string(color) + "m";
+    str->insert(0, s);
+    str->append("\033[0m");
 }

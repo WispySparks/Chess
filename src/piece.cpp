@@ -16,6 +16,7 @@ std::vector<int> Rook::getMoves(int startCol, int startRow) {
 }
 
 std::vector<int> Knight::getMoves(int startCol, int startRow) {
+    //* Squish this into loops
     std::vector<int> moves = std::vector<int>();
     moves.push_back(startCol-2); // ULL
     moves.push_back(startRow-1);
@@ -44,11 +45,26 @@ std::vector<int> Knight::getMoves(int startCol, int startRow) {
 }
 
 std::vector<int> Bishop::getMoves(int startCol, int startRow) {
-    return std::vector<int>();
+    std::vector<int> moves = std::vector<int>();
+    for (int i = 0; i < 8; i++) {
+        moves.push_back(i);
+        int row = startRow - (startCol - i);
+        moves.push_back(row);
+        moves.push_back(i);
+        row = startRow - (i - startCol);
+        moves.push_back(row);
+    }
+    return moves;
 }
 
 std::vector<int> Queen::getMoves(int startCol, int startRow) {
-    return std::vector<int>();
+    //* Maybe change this later so I'm not creating rooks and bishops
+    Rook r = Rook(Team::None);
+    Bishop b = Bishop(Team::None);
+    std::vector<int> rVector = r.getMoves(startCol, startRow);
+    std::vector<int> bVector = b.getMoves(startCol, startRow);
+    rVector.insert(rVector.end(), bVector.begin(), bVector.end());
+    return rVector;
 }
 
 std::vector<int> King::getMoves(int startCol, int startRow) {
