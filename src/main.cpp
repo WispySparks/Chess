@@ -30,7 +30,8 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-// TODO: LOS Checks, Castling, En Passant, Choose team to start with
+// TODO: Choose team to start with, LOS Checks, Castling, 
+// TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
 
 
 // https://stackoverflow.com/a/15188950
