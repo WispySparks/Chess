@@ -4,6 +4,7 @@
 #include <vector>
 
 enum Team {White, Black, None};
+Team oppositeTeam(Team team);
 class Piece {
     protected:
         Team team;

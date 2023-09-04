@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[]) {
     Board board = Board();
-    board.newGame();
+    board.newGame(Team::White);
     board.printBoardWithNotation();
     std::regex inputRegex = std::regex("^[a-h][1-8][a-h][1-8]$");
     std::string input;
@@ -14,13 +14,13 @@ int main(int argc, char* argv[]) {
         std::cin >> input; 
         if (input == "exit") break;
         if (!std::regex_match(input, inputRegex)) {
-            std::cout << "Invalid Notation";
+            std::cout << "Invalid notation.\n";
             continue;
         }
         std::string startPos = input.substr(0, 2);
         std::string endPos = input.substr(2, 2);
         if (startPos == endPos) {
-            std::cout << "Invalid Move";
+            std::cout << "Can't move to same square.\n";
             continue;
         }
         board.movePiece(startPos, endPos);

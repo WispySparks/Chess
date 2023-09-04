@@ -1,7 +1,7 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include <iostream>
+#include <string>
 #include <vector>
 #include "piece.hpp"
     
@@ -9,8 +9,9 @@
 class Board {
     // Row, Column
     Piece* board[8][8];
+    Team playerTeam;
     public:
-        void newGame();
+        void newGame(Team team);
         void movePiece(std::string start, std::string end);
         void printBoard();
         void printBoardWithNotation();

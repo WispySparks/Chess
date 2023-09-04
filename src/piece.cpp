@@ -2,6 +2,10 @@
 #include <vector>
 #include "piece.hpp"
 
+Team oppositeTeam(Team team) {
+    return (team == Team::White) ? Team::Black : Team::White;
+}
+
 std::vector<int> Rook::getMoves(int startCol, int startRow) {
     std::vector<int> moves = std::vector<int>();
     for (int i = 0; i < 8; i++) {

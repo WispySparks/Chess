@@ -1,7 +1,8 @@
 #include "board.hpp"
-#include <string>
+#include <iostream>
 
-void Board::newGame() {
+void Board::newGame(Team team) {
+    playerTeam = team;
     // Have to use 'new' so that the objects are created on the heap and I can have pointers to them.
     for (int row = 2; row < 6; row++) {
         for (int col = 0; col < 8; col++) {
@@ -9,7 +10,7 @@ void Board::newGame() {
         }
     }
     for (int i = 0; i < 8; i += 7) {
-        Team team = (i == 0) ? Team::Black : Team::White;
+        Team team = (i == 0) ? oppositeTeam(playerTeam) : playerTeam;
         board[i][0] = new Rook(team);
         board[i][1] = new Knight(team);
         board[i][2] = new Bishop(team);
@@ -20,8 +21,8 @@ void Board::newGame() {
         board[i][7] = new Rook(team);
     }
     for (int i = 0; i < 8; i++) {
-        board[1][i] = new Pawn(Team::Black);
-        board[6][i] = new Pawn(Team::White);
+        board[1][i] = new Pawn(oppositeTeam(playerTeam));
+        board[6][i] = new Pawn(playerTeam);
     }
 }
 
@@ -39,15 +40,19 @@ void Board::movePiece(std::string start, std::string end) {
         board[endRow][endCol] = piece;
         board[startRow][startCol] = new Empty();
         printBoardWithNotation();
-    } else {
-        std::cout << "Illegal Move!\n";
-    }
+    } 
 }
 
 bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow) {
     Piece* endPiece = board[endRow][endCol];
-    if (startPiece->getTeam() != Team::White) return false; //! Change later
-    if (startPiece->getTeam() == endPiece->getTeam()) return false;
+    if (startPiece->getTeam() != playerTeam) {
+        std::cout << "Wrong team!\n";
+        return false;
+    }
+    if (startPiece->getTeam() == endPiece->getTeam()) {
+        std::cout << "Can't attack same team!\n";
+        return false;
+    }
     bool legalMove = false;
     for (int i = 0; i < pieceMoves.size(); i += 2) {
         int column = pieceMoves.at(i);
@@ -57,6 +62,7 @@ bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, in
             legalMove = true;
         }
     }
+    if (!legalMove) std::cout << "Illegal move!\n";
     return legalMove;
 }
 
