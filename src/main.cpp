@@ -4,8 +4,9 @@
 #include "board.hpp"
 
 int main(int argc, char* argv[]) {
+    Team playerTeam = Team::White;
     Board board = Board();
-    board.newGame(Team::White);
+    board.newGame(playerTeam);
     board.printBoardWithNotation();
     std::regex inputRegex = std::regex("^[a-h][1-8][a-h][1-8]$");
     std::string input;
@@ -23,11 +24,14 @@ int main(int argc, char* argv[]) {
             std::cout << "Can't move to same square.\n";
             continue;
         }
-        board.movePiece(startPos, endPos);
+        board.movePiece(startPos, endPos, playerTeam);
     }
     std::cout << "--- END PROGRAM ---";
     return 0;
 }
+
+// TODO: LOS Checks, Castling, En Passant, Choose team to start with
+
 
 // https://stackoverflow.com/a/15188950
 // https://stackoverflow.com/a/655086

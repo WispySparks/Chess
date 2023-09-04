@@ -9,14 +9,13 @@
 class Board {
     // Row, Column
     Piece* board[8][8];
-    Team playerTeam;
     public:
         void newGame(Team team);
-        void movePiece(std::string start, std::string end);
+        void movePiece(std::string start, std::string end, Team team);
         void printBoard();
         void printBoardWithNotation();
     private:
-        bool checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow);
+        bool checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team);
         int fileToColumnIndex(char c);
         int rankToRowIndex(char c);
         void applyColor(std::string* str, int color);

@@ -1,8 +1,7 @@
 #include "board.hpp"
 #include <iostream>
 
-void Board::newGame(Team team) {
-    playerTeam = team;
+void Board::newGame(Team playerTeam) {
     // Have to use 'new' so that the objects are created on the heap and I can have pointers to them.
     for (int row = 2; row < 6; row++) {
         for (int col = 0; col < 8; col++) {
@@ -26,7 +25,7 @@ void Board::newGame(Team team) {
     }
 }
 
-void Board::movePiece(std::string start, std::string end) {
+void Board::movePiece(std::string start, std::string end, Team team) {
     int startCol = fileToColumnIndex(start.at(0));
     int startRow = rankToRowIndex(start.at(1));
     int endCol = fileToColumnIndex(end.at(0));
@@ -35,7 +34,7 @@ void Board::movePiece(std::string start, std::string end) {
     // Stored as column, row, column, row, etc
     std::vector<int> moves = piece->getMoves(startCol, startRow);
     // std::cout << "Getting moves for " << piece->getName() << ".\n";
-    if (checkMoveLegality(piece, moves, endCol, endRow)) {
+    if (checkMoveLegality(piece, moves, endCol, endRow, team)) {
         piece->registerMove();
         board[endRow][endCol] = piece;
         board[startRow][startCol] = new Empty();
@@ -43,9 +42,9 @@ void Board::movePiece(std::string start, std::string end) {
     } 
 }
 
-bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow) {
+bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
     Piece* endPiece = board[endRow][endCol];
-    if (startPiece->getTeam() != playerTeam) {
+    if (startPiece->getTeam() != team) {
         std::cout << "Wrong team!\n";
         return false;
     }
