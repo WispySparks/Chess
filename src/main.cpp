@@ -1,10 +1,14 @@
 #include <iostream>
+#include <limits>
 #include <regex>
 #include <string>
 #include "board.hpp"
 
+int chooseTeam();
+
 int main(int argc, char* argv[]) {
-    Team playerTeam = Team::White;
+    std::cout << "Welcome to Chess! Enter 0 to play as white and 1 to play as black.\n";
+    Team playerTeam = (Team) chooseTeam();
     Board board = Board();
     board.newGame(playerTeam);
     board.printBoardWithNotation();
@@ -30,7 +34,21 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-// TODO: Choose team to start with, LOS Checks, Castling, 
+int chooseTeam() {
+    int num;
+    while (true) {
+        std::cin >> num;
+        if (!std::cin.fail()) {
+            if (num == 0 || num == 1) break;
+        }
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid Number.\n";
+    }
+    return num;
+}
+
+// TODO: LOS Checks, Castling, 
 // TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
 
 
