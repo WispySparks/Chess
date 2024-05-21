@@ -1,5 +1,7 @@
 #include "board.hpp"
+#include <cstddef>
 #include <iostream>
+#include <limits>
 
 void Board::newGame(Team playerTeam) {
     for (int row = 2; row < 6; row++) {
@@ -35,10 +37,29 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     // std::cout << "Getting moves for " << piece->getName() << ".\n";
     if (isLegalMove(piece, moves, endCol, endRow, team)) {
         piece->registerMove();
+        if (piece->getType() == Type::Pawn && endRow == 0) {
+            std::cout << "Pawn Promotion! Input a valid piece to be promoted to. (R, N, B, Q)\n";
+            Type type = Type::None;
+            while (true) {
+                char c;
+                std::cin >> c;
+                if (!std::cin.fail()) {
+                    if (c == 'R') type = Type::Rook;
+                    if (c == 'N') type = Type::Knight;
+                    if (c == 'B') type = Type::Bishop;
+                    if (c == 'Q') type = Type::Queen;
+                    if (type != Type::None) break;
+                }
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Invalid Piece.\n";
+            }
+            piece = new Piece(team, type);
+        }
         board[endRow][endCol] = piece;
         board[startRow][startCol] = empty;
         printBoardWithNotation();
-    } 
+    }
 }
 
 bool Board::isLegalMove(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {

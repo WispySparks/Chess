@@ -35,19 +35,19 @@ int main(int argc, char* argv[]) {
 }
 
 Team chooseTeam() {
-    int num;
     while (true) {
+        int num;
         std::cin >> num;
         if (!std::cin.fail()) {
             if (num == 0 || num == 1) return (Team) num;
         }
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid Number.\n";
+        std::cout << "Invalid Team.\n";
     }
 }
 
-// TODO: LOS Checks, Castling, Promotion
+// TODO: LOS Checks, Castling
 // TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
 
 

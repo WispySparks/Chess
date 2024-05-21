@@ -6,7 +6,7 @@
 enum class Team {White, Black, None};
 enum class Type {Rook = 'R', Knight = 'N', Bishop = 'B', Queen = 'Q', King = 'K', Pawn = 'P', None = '-'};
 class Piece {
-    protected:
+    private:
         Team team;
         Type type;
         bool hasMoved = false;
