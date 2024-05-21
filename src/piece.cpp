@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include "piece.hpp"
 
@@ -90,20 +89,20 @@ std::vector<int> getPawnMoves(int startCol, int startRow, bool hasMoved) {
     return moves;
 }
 
-std::vector<int> Piece::getMoves(int startCol, int startRow) {
+std::vector<int> Piece::getMoves(int column, int row) {
     switch (getType()) {
     case Type::Rook:
-        return getRookMoves(startCol, startRow);
+        return getRookMoves(column, row);
     case Type::Knight:
-        return getKnightMoves(startCol, startRow);
+        return getKnightMoves(column, row);
     case Type::Bishop:
-        return getBishopMoves(startCol, startRow);
+        return getBishopMoves(column, row);
     case Type::Queen:
-        return getQueenMoves(startCol, startRow);
+        return getQueenMoves(column, row);
     case Type::King:
-        return getKingMoves(startCol, startRow);
+        return getKingMoves(column, row);
     case Type::Pawn:
-        return getPawnMoves(startCol, startRow, hasMoved);
+        return getPawnMoves(column, row, hasMoved);
     case Type::None:
     default:
         return std::vector<int>();

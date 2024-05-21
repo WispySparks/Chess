@@ -15,7 +15,7 @@ class Board {
         void printBoard();
         void printBoardWithNotation();
     private:
-        bool isLegalMove(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team);
+        bool isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow, Team team);
         int fileToColumnIndex(char c);
         int rankToRowIndex(char c);
         void applyColor(std::string* str, int color);

@@ -1,16 +1,16 @@
 #include "board.hpp"
-#include <cstddef>
 #include <iostream>
 #include <limits>
 
-void Board::newGame(Team playerTeam) {
+void Board::newGame(Team team) {
+    // Having a team here doesn't really make sense, the board can flip in the print function
     for (int row = 2; row < 6; row++) {
         for (int col = 0; col < 8; col++) {
             board[row][col] = empty;
         }
     }
     for (int i = 0; i < 8; i += 7) {
-        Team team = (i == 0) ? oppositeTeam(playerTeam) : playerTeam;
+        Team team = (i == 0) ? oppositeTeam(team) : team;
         board[i][0] = new Piece(team, Type::Rook);
         board[i][1] = new Piece(team, Type::Knight);
         board[i][2] = new Piece(team, Type::Bishop);
@@ -21,8 +21,8 @@ void Board::newGame(Team playerTeam) {
         board[i][7] = new Piece(team, Type::Rook);
     }
     for (int i = 0; i < 8; i++) {
-        board[1][i] = new Piece(oppositeTeam(playerTeam), Type::Pawn);
-        board[6][i] = new Piece(playerTeam, Type::Pawn);
+        board[1][i] = new Piece(oppositeTeam(team), Type::Pawn);
+        board[6][i] = new Piece(team, Type::Pawn);
     }
 }
 
@@ -62,13 +62,12 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     }
 }
 
-bool Board::isLegalMove(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
-    Piece* endPiece = board[endRow][endCol];
-    if (startPiece->getTeam() != team) {
+bool Board::isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
+    if (piece->getTeam() != team) {
         std::cout << "Wrong team!\n";
         return false;
     }
-    if (startPiece->getTeam() == endPiece->getTeam()) {
+    if (piece->getTeam() == board[endRow][endCol]->getTeam()) {
         std::cout << "Can't attack same team!\n";
         return false;
     }

@@ -39,7 +39,7 @@ Team chooseTeam() {
         int num;
         std::cin >> num;
         if (!std::cin.fail()) {
-            if (num == 0 || num == 1) return (Team) num;
+            if (num == 0 || num == 1) return static_cast<Team>(num);
         }
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
