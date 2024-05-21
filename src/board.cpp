@@ -9,18 +9,18 @@ void Board::newGame(Team playerTeam) {
     }
     for (int i = 0; i < 8; i += 7) {
         Team team = (i == 0) ? oppositeTeam(playerTeam) : playerTeam;
-        board[i][0] = new Rook(team);
-        board[i][1] = new Knight(team);
-        board[i][2] = new Bishop(team);
-        board[i][3] = new Queen(team);
-        board[i][4] = new King(team);
-        board[i][5] = new Bishop(team);
-        board[i][6] = new Knight(team);
-        board[i][7] = new Rook(team);
+        board[i][0] = new Piece(team, Type::Rook);
+        board[i][1] = new Piece(team, Type::Knight);
+        board[i][2] = new Piece(team, Type::Bishop);
+        board[i][3] = new Piece(team, Type::Queen);
+        board[i][4] = new Piece(team, Type::King);
+        board[i][5] = new Piece(team, Type::Bishop);
+        board[i][6] = new Piece(team, Type::Knight);
+        board[i][7] = new Piece(team, Type::Rook);
     }
     for (int i = 0; i < 8; i++) {
-        board[1][i] = new Pawn(oppositeTeam(playerTeam));
-        board[6][i] = new Pawn(playerTeam);
+        board[1][i] = new Piece(oppositeTeam(playerTeam), Type::Pawn);
+        board[6][i] = new Piece(playerTeam, Type::Pawn);
     }
 }
 
@@ -33,7 +33,7 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     // Stored as column, row, column, row, etc
     std::vector<int> moves = piece->getMoves(startCol, startRow);
     // std::cout << "Getting moves for " << piece->getName() << ".\n";
-    if (checkMoveLegality(piece, moves, endCol, endRow, team)) {
+    if (isLegalMove(piece, moves, endCol, endRow, team)) {
         piece->registerMove();
         board[endRow][endCol] = piece;
         board[startRow][startCol] = empty;
@@ -41,7 +41,7 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     } 
 }
 
-bool Board::checkMoveLegality(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
+bool Board::isLegalMove(Piece* startPiece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
     Piece* endPiece = board[endRow][endCol];
     if (startPiece->getTeam() != team) {
         std::cout << "Wrong team!\n";

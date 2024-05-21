@@ -6,7 +6,7 @@ Team oppositeTeam(Team team) {
     return (team == Team::White) ? Team::Black : Team::White;
 }
 
-std::vector<int> Rook::getMoves(int startCol, int startRow) {
+std::vector<int> getRookMoves(int startCol, int startRow) {
     std::vector<int> moves = std::vector<int>();
     for (int i = 0; i < 8; i++) {
         moves.push_back(i);
@@ -19,7 +19,7 @@ std::vector<int> Rook::getMoves(int startCol, int startRow) {
     return moves;
 }
 
-std::vector<int> Knight::getMoves(int startCol, int startRow) {
+std::vector<int> getKnightMoves(int startCol, int startRow) {
     //* Squish this into loops
     std::vector<int> moves = std::vector<int>();
     moves.push_back(startCol-2); // ULL
@@ -48,7 +48,7 @@ std::vector<int> Knight::getMoves(int startCol, int startRow) {
     return moves;
 }
 
-std::vector<int> Bishop::getMoves(int startCol, int startRow) {
+std::vector<int> getBishopMoves(int startCol, int startRow) {
     std::vector<int> moves = std::vector<int>();
     for (int i = 0; i < 8; i++) {
         moves.push_back(i);
@@ -61,17 +61,14 @@ std::vector<int> Bishop::getMoves(int startCol, int startRow) {
     return moves;
 }
 
-std::vector<int> Queen::getMoves(int startCol, int startRow) {
-    //* Maybe change this later so I'm not creating rooks and bishops
-    Rook r = Rook(Team::None);
-    Bishop b = Bishop(Team::None);
-    std::vector<int> rVector = r.getMoves(startCol, startRow);
-    std::vector<int> bVector = b.getMoves(startCol, startRow);
-    rVector.insert(rVector.end(), bVector.begin(), bVector.end());
-    return rVector;
+std::vector<int> getQueenMoves(int startCol, int startRow) {
+    std::vector<int> bishopMoves = getBishopMoves(startCol, startRow);
+    std::vector<int> rookMoves = getRookMoves(startCol, startRow);
+    bishopMoves.insert(bishopMoves.end(), rookMoves.begin(), rookMoves.end());
+    return bishopMoves;
 }
 
-std::vector<int> King::getMoves(int startCol, int startRow) {
+std::vector<int> getKingMoves(int startCol, int startRow) {
     std::vector<int> moves = std::vector<int>();
     for (int i = -1; i < 2; i++) {  
         for (int j = -1; j < 2; j++) {
@@ -82,7 +79,7 @@ std::vector<int> King::getMoves(int startCol, int startRow) {
     return moves;
 }
 
-std::vector<int> Pawn::getMoves(int startCol, int startRow) {
+std::vector<int> getPawnMoves(int startCol, int startRow, bool hasMoved) {
     std::vector<int> moves = std::vector<int>();
     moves.push_back(startCol);
     moves.push_back(startRow-1);
@@ -93,6 +90,22 @@ std::vector<int> Pawn::getMoves(int startCol, int startRow) {
     return moves;
 }
 
-std::vector<int> Empty::getMoves(int startCol, int startRow) {
-    return std::vector<int>();
+std::vector<int> Piece::getMoves(int startCol, int startRow) {
+    switch (getType()) {
+    case Type::Rook:
+        return getRookMoves(startCol, startRow);
+    case Type::Knight:
+        return getKnightMoves(startCol, startRow);
+    case Type::Bishop:
+        return getBishopMoves(startCol, startRow);
+    case Type::Queen:
+        return getQueenMoves(startCol, startRow);
+    case Type::King:
+        return getKingMoves(startCol, startRow);
+    case Type::Pawn:
+        return getPawnMoves(startCol, startRow, hasMoved);
+    case Type::None:
+    default:
+        return std::vector<int>();
+    }
 }

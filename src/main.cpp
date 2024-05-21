@@ -47,7 +47,7 @@ Team chooseTeam() {
     }
 }
 
-// TODO: LOS Checks, Castling, 
+// TODO: LOS Checks, Castling, Promotion
 // TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
 
 
