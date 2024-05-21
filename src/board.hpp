@@ -7,8 +7,8 @@
     
 // Pointers because object slicing
 class Board {
-    // Row, Column
-    Piece* board[8][8];
+    Piece* board[8][8]; // Row, Column
+    Empty* empty = new Empty(); // Single Empty Instance
     public:
         void newGame(Team team);
         void movePiece(std::string start, std::string end, Team team);

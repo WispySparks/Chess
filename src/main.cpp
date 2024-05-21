@@ -4,11 +4,11 @@
 #include <string>
 #include "board.hpp"
 
-int chooseTeam();
+Team chooseTeam();
 
 int main(int argc, char* argv[]) {
     std::cout << "Welcome to Chess! Enter 0 to play as white and 1 to play as black.\n";
-    Team playerTeam = (Team) chooseTeam();
+    Team playerTeam = chooseTeam();
     Board board = Board();
     board.newGame(playerTeam);
     board.printBoardWithNotation();
@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     while (true) {
         std::cout << "\nInput: ";
         std::cin >> input; 
-        if (input == "exit") break;
+        if (input == "exit" || input == "quit") break;
         if (!std::regex_match(input, inputRegex)) {
             std::cout << "Invalid notation.\n";
             continue;
@@ -34,18 +34,17 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-int chooseTeam() {
+Team chooseTeam() {
     int num;
     while (true) {
         std::cin >> num;
         if (!std::cin.fail()) {
-            if (num == 0 || num == 1) break;
+            if (num == 0 || num == 1) return (Team) num;
         }
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Invalid Number.\n";
     }
-    return num;
 }
 
 // TODO: LOS Checks, Castling, 

@@ -2,10 +2,9 @@
 #include <iostream>
 
 void Board::newGame(Team playerTeam) {
-    // Have to use 'new' so that the objects are created on the heap and I can have pointers to them.
     for (int row = 2; row < 6; row++) {
         for (int col = 0; col < 8; col++) {
-            board[row][col] = new Empty();
+            board[row][col] = empty;
         }
     }
     for (int i = 0; i < 8; i += 7) {
@@ -37,7 +36,7 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     if (checkMoveLegality(piece, moves, endCol, endRow, team)) {
         piece->registerMove();
         board[endRow][endCol] = piece;
-        board[startRow][startCol] = new Empty();
+        board[startRow][startCol] = empty;
         printBoardWithNotation();
     } 
 }
