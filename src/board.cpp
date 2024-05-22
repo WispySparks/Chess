@@ -1,5 +1,6 @@
 #include "board.hpp"
 
+#include <cstddef>
 #include <iostream>
 #include <limits>
 
@@ -74,7 +75,7 @@ bool Board::isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, i
         return false;
     }
     bool legalMove = false;
-    for (int i = 0; i < pieceMoves.size(); i += 2) {
+    for (size_t i = 0; i < pieceMoves.size(); i += 2) {
         int column = pieceMoves.at(i);
         int row = pieceMoves.at(i + 1);
         // std::cout << column << ", " << row << "\n";
