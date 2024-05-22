@@ -1,4 +1,5 @@
 #include "board.hpp"
+
 #include <iostream>
 #include <limits>
 
@@ -62,7 +63,8 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     }
 }
 
-bool Board::isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
+bool Board::isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow,
+                        Team team) {
     if (piece->getTeam() != team) {
         std::cout << "Wrong team!\n";
         return false;
@@ -74,7 +76,7 @@ bool Board::isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, i
     bool legalMove = false;
     for (int i = 0; i < pieceMoves.size(); i += 2) {
         int column = pieceMoves.at(i);
-        int row = pieceMoves.at(i+1);
+        int row = pieceMoves.at(i + 1);
         // std::cout << column << ", " << row << "\n";
         if (endCol == column && endRow == row) {
             legalMove = true;
@@ -103,23 +105,23 @@ void Board::printBoard() {
 }
 
 void Board::printBoardWithNotation() {
-    std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
+    std::cout << " a b c d e f g h\n";
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (j == 0) {
-                std::cout << (8-i) << " ";
+                std::cout << (8 - i) << " ";
             }
-            std::string str; 
+            std::string str;
             str += board[i][j]->getName();
             if (board[i][j]->getTeam() == Team::Black) applyColor(&str, 34);
             std::cout << str << " ";
             if (j == 7) {
-                std::cout << (8-i) << " ";
+                std::cout << (8 - i) << " ";
             }
         }
         std::cout << "\n";
     }
-    std::cout << "  a" << " " << "b" << " " << "c" << " " << "d" << " " << "e" << " " << "f" << " " << "g" << " " << "h" << "\n";
+    std::cout << " a b c d e f g h\n";
 }
 
 void Board::applyColor(std::string* str, int color) {

@@ -2,6 +2,7 @@
 #include <limits>
 #include <regex>
 #include <string>
+
 #include "board.hpp"
 
 Team chooseTeam();
@@ -16,7 +17,7 @@ int main(int argc, char* argv[]) {
     std::string input;
     while (true) {
         std::cout << "\nInput: ";
-        std::cin >> input; 
+        std::cin >> input;
         if (input == "exit" || input == "quit") break;
         if (!std::regex_match(input, inputRegex)) {
             std::cout << "Invalid notation.\n";
@@ -49,7 +50,6 @@ Team chooseTeam() {
 
 // TODO: LOS Checks, Castling
 // TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
-
 
 // https://stackoverflow.com/a/15188950
 // https://stackoverflow.com/a/655086
