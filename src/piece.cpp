@@ -1,111 +1,99 @@
-#include "piece.hpp"
-
 #include <vector>
 
-Team oppositeTeam(Team team) {
-    return (team == Team::White) ? Team::Black : Team::White;
-}
+#include "board.hpp"
 
-std::vector<int> getRookMoves(int startCol, int startRow) {
-    std::vector<int> moves = std::vector<int>();
-    for (int i = 0; i < 8; i++) {
-        moves.push_back(i);
-        moves.push_back(startRow);
+std::vector<Pos> getRookMoves(Pos pos) {
+    std::vector<Pos> moves;
+    for (int col = pos.getCol() + 1; col < Board::size; col++) {
+        Pos newPos = {pos.getRow(), col};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
     }
-    for (int i = 0; i < 8; i++) {
-        moves.push_back(startCol);
-        moves.push_back(i);
+    for (int col = pos.getCol() - 1; col >= 0; col--) {
+        Pos newPos = {pos.getRow(), col};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
+    }
+    for (int row = pos.getRow() + 1; row < Board::size; row++) {
+        Pos newPos = {row, pos.getCol()};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
+    }
+    for (int row = pos.getRow() - 1; row >= 0; row--) {
+        Pos newPos = {row, pos.getCol()};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
     }
     return moves;
 }
 
-std::vector<int> getKnightMoves(int startCol, int startRow) {
+std::vector<Pos> getKnightMoves(Pos pos) {
     //* Squish this into loops
-    std::vector<int> moves = std::vector<int>();
-    moves.push_back(startCol - 2);  // ULL
-    moves.push_back(startRow - 1);
-
-    moves.push_back(startCol - 1);  // UUL
-    moves.push_back(startRow - 2);
-
-    moves.push_back(startCol + 1);  // UUR
-    moves.push_back(startRow - 2);
-
-    moves.push_back(startCol + 2);  // URR
-    moves.push_back(startRow - 1);
-
-    moves.push_back(startCol + 2);  // DRR
-    moves.push_back(startRow + 1);
-
-    moves.push_back(startCol + 1);  // DDR
-    moves.push_back(startRow + 2);
-
-    moves.push_back(startCol - 1);  // DDL
-    moves.push_back(startRow + 2);
-
-    moves.push_back(startCol - 2);  // DLL
-    moves.push_back(startRow + 1);
+    std::vector<Pos> moves;
+    moves.push_back(Pos{pos.getRow() - 1, pos.getCol() - 2});  // ULL
+    moves.push_back(Pos{pos.getRow() - 2, pos.getCol() - 1});  // ULL
+    moves.push_back(Pos{pos.getRow() - 2, pos.getCol() + 1});  // UUR
+    moves.push_back(Pos{pos.getRow() - 1, pos.getCol() + 2});  // URR
+    moves.push_back(Pos{pos.getRow() + 1, pos.getCol() + 2});  // DRR
+    moves.push_back(Pos{pos.getRow() + 2, pos.getCol() + 1});  // DDR
+    moves.push_back(Pos{pos.getRow() + 2, pos.getCol() - 1});  // DDL
+    moves.push_back(Pos{pos.getRow() + 1, pos.getCol() - 2});  // DLL
     return moves;
 }
 
-std::vector<int> getBishopMoves(int startCol, int startRow) {
-    std::vector<int> moves = std::vector<int>();
-    for (int i = 0; i < 8; i++) {
-        moves.push_back(i);
-        int row = startRow - (startCol - i);
-        moves.push_back(row);
-        moves.push_back(i);
-        row = startRow - (i - startCol);
-        moves.push_back(row);
+std::vector<Pos> getBishopMoves(Pos pos) {
+    std::vector<Pos> moves;
+    for (int col = 0; col < Board::size; col++) {
+        int row = pos.getRow() - (pos.getCol() - col);
+        moves.push_back(Pos{row, col});
+        row = pos.getRow() - (col - pos.getCol());
+        moves.push_back(Pos{row, col});
     }
     return moves;
 }
 
-std::vector<int> getQueenMoves(int startCol, int startRow) {
-    std::vector<int> bishopMoves = getBishopMoves(startCol, startRow);
-    std::vector<int> rookMoves = getRookMoves(startCol, startRow);
-    bishopMoves.insert(bishopMoves.end(), rookMoves.begin(), rookMoves.end());
-    return bishopMoves;
+std::vector<Pos> getQueenMoves(Pos pos) {
+    std::vector<Pos> rookMoves = getRookMoves(pos);
+    std::vector<Pos> bishopMoves = getBishopMoves(pos);
+    rookMoves.insert(rookMoves.end(), bishopMoves.begin(), bishopMoves.end());
+    return rookMoves;
 }
 
-std::vector<int> getKingMoves(int startCol, int startRow) {
-    std::vector<int> moves = std::vector<int>();
+std::vector<Pos> getKingMoves(Pos pos) {
+    std::vector<Pos> moves;
     for (int i = -1; i < 2; i++) {
         for (int j = -1; j < 2; j++) {
-            moves.push_back(startCol + j);
-            moves.push_back(startRow + i);
+            moves.push_back(Pos{pos.getRow() + i, pos.getCol() + j});
         }
     }
     return moves;
 }
 
-std::vector<int> getPawnMoves(int startCol, int startRow, bool hasMoved) {
-    std::vector<int> moves = std::vector<int>();
-    moves.push_back(startCol);
-    moves.push_back(startRow - 1);
+std::vector<Pos> getPawnMoves(Pos pos, bool hasMoved) {
+    std::vector<Pos> moves;
+    moves.push_back(Pos{pos.getRow() - 1, pos.getCol()});
     if (!hasMoved) {
-        moves.push_back(startCol);
-        moves.push_back(startRow - 2);
+        moves.push_back(Pos{pos.getRow() - 2, pos.getCol()});
     }
     return moves;
 }
 
-std::vector<int> Piece::getMoves(int column, int row) {
+std::vector<Pos> Piece::getMoves(Pos pos) {
     switch (getType()) {
         case Type::Rook:
-            return getRookMoves(column, row);
+            return getRookMoves(pos);
         case Type::Knight:
-            return getKnightMoves(column, row);
+            return getKnightMoves(pos);
         case Type::Bishop:
-            return getBishopMoves(column, row);
+            return getBishopMoves(pos);
         case Type::Queen:
-            return getQueenMoves(column, row);
+            return getQueenMoves(pos);
         case Type::King:
-            return getKingMoves(column, row);
+            return getKingMoves(pos);
         case Type::Pawn:
-            return getPawnMoves(column, row, hasMoved);
+            return getPawnMoves(pos, hasMoved);
         case Type::None:
         default:
-            return std::vector<int>();
+            return std::vector<Pos>();
     }
 }

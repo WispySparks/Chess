@@ -1,10 +1,10 @@
 #include "board.hpp"
 
-#include <cstddef>
+#include <algorithm>
 #include <iostream>
 #include <limits>
 
-Piece* board[8][8];                                // Row, Column
+Piece* board[Board::size][Board::size];            // Row, Column
 Piece* empty = new Piece(Team::None, Type::None);  // Single Empty Instance
 
 int fileToColumnIndex(char c) {
@@ -22,37 +22,34 @@ void applyColor(std::string* str, int color) {
     str->append("\033[0m");
 }
 
-bool isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
+bool isLegalMove(Piece* piece, std::vector<Pos> moves, Pos pos, Team team) {
+    if (piece == empty) {
+        std::cout << "No piece selected!\n";
+        return false;
+    }
     if (piece->getTeam() != team) {
         std::cout << "Wrong team!\n";
         return false;
     }
-    if (piece->getTeam() == board[endRow][endCol]->getTeam()) {
+    if (piece->getTeam() == board[pos.getRow()][pos.getCol()]->getTeam()) {
         std::cout << "Can't attack same team!\n";
         return false;
     }
-    bool legalMove = false;
-    for (size_t i = 0; i < pieceMoves.size(); i += 2) {
-        int column = pieceMoves.at(i);
-        int row = pieceMoves.at(i + 1);
-        // std::cout << column << ", " << row << "\n";
-        if (endCol == column && endRow == row) {
-            legalMove = true;
-        }
-    }
+    bool legalMove = std::find(moves.begin(), moves.end(), pos) != moves.end();
     if (!legalMove) std::cout << "Illegal move!\n";
     return legalMove;
 }
 
-void Board::newGame(Team team) {
+void Board::newGame(Team playerteam) {
     // Having a team here doesn't really make sense, the board can flip in the print function
+    Team opponentTeam = oppositeTeam(playerteam);
     for (int row = 2; row < 6; row++) {
-        for (int col = 0; col < 8; col++) {
+        for (int col = 0; col < Board::size; col++) {
             board[row][col] = empty;
         }
     }
-    for (int i = 0; i < 8; i += 7) {
-        Team team = (i == 0) ? oppositeTeam(team) : team;
+    for (int i = 0; i < Board::size; i += 7) {
+        Team team = (i == 0) ? opponentTeam : playerteam;
         board[i][0] = new Piece(team, Type::Rook);
         board[i][1] = new Piece(team, Type::Knight);
         board[i][2] = new Piece(team, Type::Bishop);
@@ -62,14 +59,14 @@ void Board::newGame(Team team) {
         board[i][6] = new Piece(team, Type::Knight);
         board[i][7] = new Piece(team, Type::Rook);
     }
-    for (int i = 0; i < 8; i++) {
-        board[1][i] = new Piece(oppositeTeam(team), Type::Pawn);
-        board[6][i] = new Piece(team, Type::Pawn);
+    for (int i = 0; i < Board::size; i++) {
+        board[1][i] = new Piece(opponentTeam, Type::Pawn);
+        board[6][i] = new Piece(playerteam, Type::Pawn);
     }
 }
 
-bool Board::isPieceAtPos(int row, int col) {
-    return board[row][col]->getType() != Type::None;
+bool Board::isPiecePresent(Pos pos) {
+    return board[pos.getRow()][pos.getCol()]->getType() != Type::None;
 }
 
 void Board::movePiece(std::string start, std::string end, Team team) {
@@ -78,10 +75,8 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     int endCol = fileToColumnIndex(end.at(0));
     int endRow = rankToRowIndex(end.at(1));
     Piece* piece = board[startRow][startCol];
-    // Stored as column, row, column, row, etc
-    std::vector<int> moves = piece->getMoves(startCol, startRow);
-    // std::cout << "Getting moves for " << piece->getName() << ".\n";
-    if (isLegalMove(piece, moves, endCol, endRow, team)) {
+    std::vector<Pos> moves = piece->getMoves(Pos{startRow, startCol});
+    if (isLegalMove(piece, moves, Pos{endRow, endCol}, team)) {
         piece->registerMove();
         if (piece->getType() == Type::Pawn && endRow == 0) {
             std::cout << "Pawn Promotion! Input a valid piece to be promoted to. (R, N, B, Q)\n";
@@ -109,8 +104,8 @@ void Board::movePiece(std::string start, std::string end, Team team) {
 }
 
 void Board::printBoard() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < Board::size; i++) {
+        for (int j = 0; j < Board::size; j++) {
             std::cout << board[i][j]->getName() << " ";
         }
         std::cout << "\n";
@@ -118,21 +113,21 @@ void Board::printBoard() {
 }
 
 void Board::printBoardWithNotation() {
-    std::cout << " a b c d e f g h\n";
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    std::cout << "  a b c d e f g h\n";
+    for (int i = 0; i < Board::size; i++) {
+        for (int j = 0; j < Board::size; j++) {
             if (j == 0) {
-                std::cout << (8 - i) << " ";
+                std::cout << (Board::size - i) << " ";
             }
             std::string str;
             str += board[i][j]->getName();
             if (board[i][j]->getTeam() == Team::Black) applyColor(&str, 34);
             std::cout << str << " ";
             if (j == 7) {
-                std::cout << (8 - i) << " ";
+                std::cout << (Board::size - i) << " ";
             }
         }
         std::cout << "\n";
     }
-    std::cout << " a b c d e f g h\n";
+    std::cout << "  a b c d e f g h\n";
 }

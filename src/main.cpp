@@ -47,7 +47,7 @@ Team chooseTeam() {
     }
 }
 
-// TODO: LOS Checks, Castling
+// TODO: LOS Checks (Pawn, Bishop, King Castling), Castling
 // TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
 
 // https://stackoverflow.com/a/15188950

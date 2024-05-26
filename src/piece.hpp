@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 
+struct Pos;
 enum class Team : int { White, Black, None };
 enum class Type : char {
     Rook = 'R',
@@ -28,8 +29,10 @@ class Piece {
         Type getType() { return type; }
         char getName() { return std::to_underlying(type); }
         void registerMove() { hasMoved = true; }
-        std::vector<int> getMoves(int column, int row);
+        std::vector<Pos> getMoves(Pos pos);
 };
-Team oppositeTeam(Team team);
+inline Team oppositeTeam(Team team) {
+    return (team == Team::White) ? Team::Black : Team::White;
+};
 
 #endif
