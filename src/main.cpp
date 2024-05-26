@@ -10,9 +10,8 @@ Team chooseTeam();
 int main(int argc, char* argv[]) {
     std::cout << "Welcome to Chess! Enter 0 to play as white and 1 to play as black.\n";
     Team playerTeam = chooseTeam();
-    Board board = Board();
-    board.newGame(playerTeam);
-    board.printBoardWithNotation();
+    Board::newGame(playerTeam);
+    Board::printBoardWithNotation();
     std::regex inputRegex = std::regex("^[a-h][1-8][a-h][1-8]$");
     std::string input;
     while (true) {
@@ -29,7 +28,7 @@ int main(int argc, char* argv[]) {
             std::cout << "Can't move to same square.\n";
             continue;
         }
-        board.movePiece(startPos, endPos, playerTeam);
+        Board::movePiece(startPos, endPos, playerTeam);
     }
     std::cout << "--- END PROGRAM ---";
     return 0;

@@ -4,6 +4,46 @@
 #include <iostream>
 #include <limits>
 
+Piece* board[8][8];                                // Row, Column
+Piece* empty = new Piece(Team::None, Type::None);  // Single Empty Instance
+
+int fileToColumnIndex(char c) {
+    return c - 'a';
+}
+
+int rankToRowIndex(char c) {
+    // flip index as player is the bottom pieces
+    return 7 - (c - '1');
+}
+
+void applyColor(std::string* str, int color) {
+    std::string s = "\033[" + std::to_string(color) + "m";
+    str->insert(0, s);
+    str->append("\033[0m");
+}
+
+bool isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow, Team team) {
+    if (piece->getTeam() != team) {
+        std::cout << "Wrong team!\n";
+        return false;
+    }
+    if (piece->getTeam() == board[endRow][endCol]->getTeam()) {
+        std::cout << "Can't attack same team!\n";
+        return false;
+    }
+    bool legalMove = false;
+    for (size_t i = 0; i < pieceMoves.size(); i += 2) {
+        int column = pieceMoves.at(i);
+        int row = pieceMoves.at(i + 1);
+        // std::cout << column << ", " << row << "\n";
+        if (endCol == column && endRow == row) {
+            legalMove = true;
+        }
+    }
+    if (!legalMove) std::cout << "Illegal move!\n";
+    return legalMove;
+}
+
 void Board::newGame(Team team) {
     // Having a team here doesn't really make sense, the board can flip in the print function
     for (int row = 2; row < 6; row++) {
@@ -26,6 +66,10 @@ void Board::newGame(Team team) {
         board[1][i] = new Piece(oppositeTeam(team), Type::Pawn);
         board[6][i] = new Piece(team, Type::Pawn);
     }
+}
+
+bool Board::isPieceAtPos(int row, int col) {
+    return board[row][col]->getType() != Type::None;
 }
 
 void Board::movePiece(std::string start, std::string end, Team team) {
@@ -64,38 +108,6 @@ void Board::movePiece(std::string start, std::string end, Team team) {
     }
 }
 
-bool Board::isLegalMove(Piece* piece, std::vector<int> pieceMoves, int endCol, int endRow,
-                        Team team) {
-    if (piece->getTeam() != team) {
-        std::cout << "Wrong team!\n";
-        return false;
-    }
-    if (piece->getTeam() == board[endRow][endCol]->getTeam()) {
-        std::cout << "Can't attack same team!\n";
-        return false;
-    }
-    bool legalMove = false;
-    for (size_t i = 0; i < pieceMoves.size(); i += 2) {
-        int column = pieceMoves.at(i);
-        int row = pieceMoves.at(i + 1);
-        // std::cout << column << ", " << row << "\n";
-        if (endCol == column && endRow == row) {
-            legalMove = true;
-        }
-    }
-    if (!legalMove) std::cout << "Illegal move!\n";
-    return legalMove;
-}
-
-int Board::fileToColumnIndex(char c) {
-    return c - 'a';
-}
-
-int Board::rankToRowIndex(char c) {
-    // flip index as player is the bottom pieces
-    return 7 - (c - '1');
-}
-
 void Board::printBoard() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -123,10 +135,4 @@ void Board::printBoardWithNotation() {
         std::cout << "\n";
     }
     std::cout << " a b c d e f g h\n";
-}
-
-void Board::applyColor(std::string* str, int color) {
-    std::string s = "\033[" + std::to_string(color) + "m";
-    str->insert(0, s);
-    str->append("\033[0m");
 }
