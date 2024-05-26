@@ -1,25 +1,27 @@
+#include "piece.hpp"
+
 #include <vector>
 
 #include "board.hpp"
 
 std::vector<Pos> getRookMoves(Pos pos) {
     std::vector<Pos> moves;
-    for (int col = pos.getCol() + 1; col < Board::size; col++) {
+    for (int col = pos.getCol() + 1; col < Board::size; col++) {  // Right
         Pos newPos = {pos.getRow(), col};
         moves.push_back(newPos);
         if (Board::isPiecePresent(newPos)) break;
     }
-    for (int col = pos.getCol() - 1; col >= 0; col--) {
+    for (int col = pos.getCol() - 1; col >= 0; col--) {  // Left
         Pos newPos = {pos.getRow(), col};
         moves.push_back(newPos);
         if (Board::isPiecePresent(newPos)) break;
     }
-    for (int row = pos.getRow() + 1; row < Board::size; row++) {
+    for (int row = pos.getRow() + 1; row < Board::size; row++) {  // Down
         Pos newPos = {row, pos.getCol()};
         moves.push_back(newPos);
         if (Board::isPiecePresent(newPos)) break;
     }
-    for (int row = pos.getRow() - 1; row >= 0; row--) {
+    for (int row = pos.getRow() - 1; row >= 0; row--) {  // Up
         Pos newPos = {row, pos.getCol()};
         moves.push_back(newPos);
         if (Board::isPiecePresent(newPos)) break;
@@ -43,11 +45,25 @@ std::vector<Pos> getKnightMoves(Pos pos) {
 
 std::vector<Pos> getBishopMoves(Pos pos) {
     std::vector<Pos> moves;
-    for (int col = 0; col < Board::size; col++) {
-        int row = pos.getRow() - (pos.getCol() - col);
-        moves.push_back(Pos{row, col});
-        row = pos.getRow() - (col - pos.getCol());
-        moves.push_back(Pos{row, col});
+    for (int col = pos.getCol() + 1; col < Board::size; col++) {  // Right Down
+        Pos newPos = {pos.getRow() + (col - pos.getCol()), col};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
+    }
+    for (int col = pos.getCol() + 1; col < Board::size; col++) {  // Right Up
+        Pos newPos = {pos.getRow() - (col - pos.getCol()), col};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
+    }
+    for (int col = pos.getCol() - 1; col >= 0; col--) {  // Left Up
+        Pos newPos = {pos.getRow() + (col - pos.getCol()), col};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
+    }
+    for (int col = pos.getCol() - 1; col >= 0; col--) {  // Left Down
+        Pos newPos = {pos.getRow() - (col - pos.getCol()), col};
+        moves.push_back(newPos);
+        if (Board::isPiecePresent(newPos)) break;
     }
     return moves;
 }
@@ -71,8 +87,9 @@ std::vector<Pos> getKingMoves(Pos pos) {
 
 std::vector<Pos> getPawnMoves(Pos pos, bool hasMoved) {
     std::vector<Pos> moves;
-    moves.push_back(Pos{pos.getRow() - 1, pos.getCol()});
-    if (!hasMoved) {
+    Pos firstSquare = {pos.getRow() - 1, pos.getCol()};
+    moves.push_back(firstSquare);
+    if (!hasMoved && !Board::isPiecePresent(firstSquare)) {
         moves.push_back(Pos{pos.getRow() - 2, pos.getCol()});
     }
     return moves;

@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-struct Pos;
+class Pos;
 enum class Team : int { White, Black, None };
 enum class Type : char {
     Rook = 'R',

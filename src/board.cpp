@@ -4,6 +4,9 @@
 #include <iostream>
 #include <limits>
 
+#include "piece.hpp"
+
+
 Piece* board[Board::size][Board::size];            // Row, Column
 Piece* empty = new Piece(Team::None, Type::None);  // Single Empty Instance
 

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "board.hpp"
+#include "piece.hpp"
 
 Team chooseTeam();
 
@@ -47,7 +48,7 @@ Team chooseTeam() {
     }
 }
 
-// TODO: LOS Checks (Pawn, Bishop, King Castling), Castling
+// TODO: LOS Checks (King Castling), Castling
 // TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
 
 // https://stackoverflow.com/a/15188950
