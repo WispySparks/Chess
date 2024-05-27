@@ -70,6 +70,10 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
     int endRow = rankToRowIndex(end.at(1));
     Piece* piece = board[startRow][startCol];
     std::vector<Pos> moves = getMoves(*this, *piece, Pos{startRow, startCol});
+    std::cout << "Moves\n";
+    for (auto p : moves) {
+        std::cout << p.col << " " << p.row << "\n";
+    }
     if (isLegalMove(*piece, moves, Pos{endRow, endCol}, team)) {
         piece->moved = true;
         if (piece->type == Type::Pawn && endRow == 0) {
@@ -98,8 +102,12 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
     return false;
 }
 
-bool Board::isPiecePresent(Pos pos) {
-    return board[pos.row][pos.col]->type != Type::None;
+bool Board::isPiecePresent(Pos pos) const {
+    return getPiece(pos).type != Type::None;
+}
+
+Piece Board::getPiece(Pos pos) const {
+    return *board[pos.row][pos.col];
 }
 
 void printBoardWhite() {
@@ -142,7 +150,7 @@ void printBoardBlack() {
     std::cout << "  h g f e d c b a\n";
 }
 
-void Board::printBoardWithNotation(Team team) {
+void Board::printBoardWithNotation(Team team) const {
     if (team == Team::White) {
         printBoardWhite();
     } else {

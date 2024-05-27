@@ -6,22 +6,48 @@
 #include "position.hpp"
 #include "team.hpp"
 
+class Piece;
 class Board {
     public:
         static constexpr int size = 8;
         void newGame();
         bool movePiece(std::string start, std::string end, Team team);
-        bool isPiecePresent(Pos pos);
-        void printBoardWithNotation(Team team);
+        bool isPiecePresent(Pos pos) const;
+        Piece getPiece(Pos pos) const;
+        void printBoardWithNotation(Team team) const;
 };
 
-constexpr Pos queenSideRook{7, 0};
-constexpr Pos queenSideKnight{7, 1};
-constexpr Pos queenSideBishop{7, 2};
-constexpr Pos queen{7, 3};
-constexpr Pos king{7, 4};
-constexpr Pos kingSideBishop{7, 5};
-constexpr Pos kingSideKnight{7, 6};
-constexpr Pos kingSideRook{7, 7};
+inline Pos queenSideRook(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 0};
+};
+inline Pos queenSideKnight(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 1};
+};
+inline Pos queenSideBishop(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 2};
+};
+inline Pos queen(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 3};
+};
+inline Pos king(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 4};
+};
+inline Pos kingSideBishop(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 5};
+};
+inline Pos kingSideKnight(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 6};
+};
+inline Pos kingSideRook(Team team) {
+    int row = (team == Team::White) ? 7 : 0;
+    return {row, 7};
+};
 
 #endif
