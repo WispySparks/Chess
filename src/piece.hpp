@@ -11,7 +11,7 @@ class Piece {
     private:
         Team team;
         Type type;
-        bool hasMoved = false;
+        bool moved = false;
     public:
         Piece(Team team, Type type) {
             this->team = team;
@@ -20,7 +20,7 @@ class Piece {
         Team getTeam() { return team; }
         Type getType() { return type; }
         char getName() { return std::to_underlying(type); }
-        void registerMove() { hasMoved = true; }
+        void registerMove() { moved = true; }
         std::vector<Pos> getMoves(Pos pos);
 };
 

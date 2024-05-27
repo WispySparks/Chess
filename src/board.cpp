@@ -33,7 +33,7 @@ bool isLegalMove(Piece* piece, std::vector<Pos> moves, Pos pos, Team team) {
         std::cout << "Wrong team!\n";
         return false;
     }
-    if (piece->getTeam() == board[pos.getRow()][pos.getCol()]->getTeam()) {
+    if (piece->getTeam() == board[pos.row][pos.col]->getTeam()) {
         std::cout << "Can't attack same team!\n";
         return false;
     }
@@ -68,7 +68,7 @@ void Board::newGame(Team playerteam) {
 }
 
 bool Board::isPiecePresent(Pos pos) {
-    return board[pos.getRow()][pos.getCol()]->getType() != Type::None;
+    return board[pos.row][pos.col]->getType() != Type::None;
 }
 
 void Board::movePiece(std::string start, std::string end, Team team) {
