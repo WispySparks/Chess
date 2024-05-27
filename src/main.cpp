@@ -18,22 +18,31 @@ int main(int argc, char* argv[]) {
         std::cout << "\nInput: ";
         std::cin >> input;
         if (input == "exit" || input == "quit") break;
-        if (!std::regex_match(input, inputRegex)) {
+        if (input == "0-0") {
+            if (board.castle(false, currentTeam)) {
+                currentTeam = oppositeTeam(currentTeam);
+            }
+        } else if (input == "0-0-0") {
+            if (board.castle(true, currentTeam)) {
+                currentTeam = oppositeTeam(currentTeam);
+            }
+        } else if (!std::regex_match(input, inputRegex)) {
             std::cout << "Invalid notation.\n";
-            continue;
+        } else {
+            std::string startPos = input.substr(0, 2);
+            std::string endPos = input.substr(2, 2);
+            if (startPos == endPos) {
+                std::cout << "Can't move to same square.\n";
+                continue;
+            }
+            if (board.movePiece(startPos, endPos, currentTeam)) {
+                currentTeam = oppositeTeam(currentTeam);
+            }
         }
-        std::string startPos = input.substr(0, 2);
-        std::string endPos = input.substr(2, 2);
-        if (startPos == endPos) {
-            std::cout << "Can't move to same square.\n";
-            continue;
-        }
-        if (board.movePiece(startPos, endPos, currentTeam)) currentTeam = oppositeTeam(currentTeam);
         board.printBoardWithNotation(currentTeam);
     }
     std::cout << "--- END PROGRAM ---";
     return EXIT_SUCCESS;
 }
 
-// TODO: LOS Checks (King Castling), Castling
-// TODO: Play against self, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
+// TODO: Pawn diagonal attack, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent

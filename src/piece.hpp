@@ -14,8 +14,7 @@ struct Piece {
         const Type type;
         bool moved = false;
         char getName() const { return std::to_underlying(type); }
+        std::vector<Pos> getMoves(Board board, Pos pos);
 };
-
-std::vector<Pos> getMoves(Board board, Piece piece, Pos pos);
 
 #endif

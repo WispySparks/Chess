@@ -80,22 +80,12 @@ std::vector<Pos> getQueenMoves(Board board, Pos pos) {
     return rookMoves;
 }
 
-std::vector<Pos> getKingMoves(Board board, Piece piece, Pos pos) {
+std::vector<Pos> getKingMoves(Board board, Pos pos) {
     std::vector<Pos> moves;
     for (int i = -1; i < 2; i++) {
         for (int j = -1; j < 2; j++) {
             moves.push_back({pos.row + i, pos.col + j});
         }
-    }
-    Team team = piece.team;
-    if (!piece.moved && !board.isPiecePresent(kingSideBishop(team)) &&
-        !board.isPiecePresent(kingSideKnight(team)) && !board.getPiece(kingSideRook(team)).moved) {
-        moves.push_back(kingSideRook(team));
-    }
-    if (!piece.moved && !board.isPiecePresent(queenSideBishop(team)) &&
-        !board.isPiecePresent(queenSideKnight(team)) &&
-        !board.getPiece(queenSideRook(team)).moved) {
-        moves.push_back(queenSideRook(team));
     }
     return moves;
 }
@@ -111,8 +101,8 @@ std::vector<Pos> getPawnMoves(Board board, Piece piece, Pos pos) {
     return moves;
 }
 
-std::vector<Pos> getMoves(Board board, Piece piece, Pos pos) {
-    switch (piece.type) {
+std::vector<Pos> Piece::getMoves(Board board, Pos pos) {
+    switch (type) {
         case Type::Rook:
             return getRookMoves(board, pos);
         case Type::Knight:
@@ -122,9 +112,9 @@ std::vector<Pos> getMoves(Board board, Piece piece, Pos pos) {
         case Type::Queen:
             return getQueenMoves(board, pos);
         case Type::King:
-            return getKingMoves(board, piece, pos);
+            return getKingMoves(board, pos);
         case Type::Pawn:
-            return getPawnMoves(board, piece, pos);
+            return getPawnMoves(board, *this, pos);
         case Type::None:
         default:
             return std::vector<Pos>();

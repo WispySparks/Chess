@@ -27,13 +27,20 @@ void applyColor(std::string& str, int color) {
     str.append("\033[0m");
 }
 
+std::shared_ptr<Piece> getPiece(Pos pos) {
+    return board[pos.row][pos.col];
+}
+
+void setPiece(Pos pos, std::shared_ptr<Piece> piece) {
+    board[pos.row][pos.col] = piece;
+}
+
 bool isLegalMove(Piece piece, std::vector<Pos> moves, Pos pos, Team team) {
     if (piece.team != team) {
         std::cout << "Wrong team!\n";
         return false;
     }
-    if (piece.team == board[pos.row][pos.col]->team &&
-        board[pos.row][pos.col]->type != Type::None) {
+    if (piece.team == getPiece(pos)->team && getPiece(pos)->type != Type::None) {
         std::cout << "Can't attack same team!\n";
         return false;
     }
@@ -71,13 +78,15 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
     int startRow = rankToRowIndex(start.at(1));
     int endCol = fileToColumnIndex(end.at(0));
     int endRow = rankToRowIndex(end.at(1));
-    std::shared_ptr<Piece> piece = board[startRow][startCol];
-    std::vector<Pos> moves = getMoves(*this, *piece, Pos{startRow, startCol});
-    std::cout << "Moves\n";
-    for (auto p : moves) {
-        std::cout << p.col << " " << p.row << "\n";
-    }
-    if (isLegalMove(*piece, moves, Pos{endRow, endCol}, team)) {
+    Pos startPos{startRow, startCol};
+    Pos endPos{endRow, endCol};
+    std::shared_ptr<Piece> piece = getPiece(startPos);
+    std::vector<Pos> moves = piece->getMoves(*this, startPos);
+    // std::cout << "Moves\n";
+    // for (auto p : moves) {
+    // std::cout << p.col << " " << p.row << "\n";
+    // }
+    if (isLegalMove(*piece, moves, endPos, team)) {
         piece->moved = true;
         if (piece->type == Type::Pawn && endRow == 0) {
             std::cout << "Pawn Promotion! Input a valid piece to be promoted to. (R, N, B, Q)\n";
@@ -98,31 +107,54 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
             }
             piece = std::make_shared<Piece>(team, type);
         }
-        board[endRow][endCol] = piece;
-        board[startRow][startCol] = empty;
+        setPiece(endPos, piece);
+        setPiece(startPos, empty);
         return true;
     }
     return false;
 }
 
-bool Board::isPiecePresent(Pos pos) const {
-    return getPiece(pos).type != Type::None;
+bool Board::castle(bool queenSide, Team team) {
+    std::shared_ptr<Piece> king = getPiece(Board::king(team));
+    std::shared_ptr<Piece> kingRook = getPiece(kingSideRook(team));
+    std::shared_ptr<Piece> queenRook = getPiece(queenSideRook(team));
+    if (!queenSide && !king->moved && !isPiecePresent(kingSideBishop(team)) &&
+        !isPiecePresent(kingSideKnight(team)) && !kingRook->moved) {
+        setPiece(Board::king(team), empty);
+        setPiece(kingSideRook(team), empty);
+        setPiece(kingSideBishop(team), kingRook);
+        setPiece(kingSideKnight(team), king);
+        return true;
+    }
+    if (queenSide && !king->moved && !isPiecePresent(queen(team)) &&
+        !isPiecePresent(queenSideBishop(team)) && !isPiecePresent(queenSideKnight(team)) &&
+        !queenRook->moved) {
+        setPiece(Board::king(team), empty);
+        setPiece(queenSideRook(team), empty);
+        setPiece(queen(team), queenRook);
+        setPiece(queenSideBishop(team), king);
+        return true;
+    }
+    std::cout << "Can't Castle!\n";
+    return false;
 }
 
-Piece Board::getPiece(Pos pos) const {
-    return *board[pos.row][pos.col];
+bool Board::isPiecePresent(Pos pos) const {
+    return getPiece(pos)->type != Type::None;
 }
 
 void printBoardWhite() {
     std::cout << "  a b c d e f g h\n";
     for (int row = 0; row < Board::size; row++) {
         for (int col = 0; col < Board::size; col++) {
+            Pos pos{row, col};
+            auto piece = getPiece(pos);
             if (col == 0) {
                 std::cout << (Board::size - row) << " ";
             }
             std::string str;
-            str += board[row][col]->getName();
-            if (board[row][col]->team == Team::Black) applyColor(str, 34);
+            str += piece->getName();
+            if (piece->team == Team::Black) applyColor(str, 34);
             std::cout << str << " ";
             if (col == 7) {
                 std::cout << (Board::size - row) << " ";
@@ -137,12 +169,14 @@ void printBoardBlack() {
     std::cout << "  h g f e d c b a\n";
     for (int row = Board::size - 1; row >= 0; row--) {
         for (int col = Board::size - 1; col >= 0; col--) {
+            Pos pos{row, col};
+            auto piece = getPiece(pos);
             if (col == 7) {
                 std::cout << (Board::size - row) << " ";
             }
             std::string str;
-            str += board[row][col]->getName();
-            if (board[row][col]->team == Team::Black) applyColor(str, 34);
+            str += piece->getName();
+            if (piece->team == Team::Black) applyColor(str, 34);
             std::cout << str << " ";
             if (col == 0) {
                 std::cout << (Board::size - row) << " ";
