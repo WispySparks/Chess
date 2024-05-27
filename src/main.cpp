@@ -4,7 +4,7 @@
 #include <string>
 
 #include "board.hpp"
-#include "piece.hpp"
+#include "team.hpp"
 
 Team chooseTeam();
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         Board::movePiece(startPos, endPos, playerTeam);
     }
     std::cout << "--- END PROGRAM ---";
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 Team chooseTeam() {
@@ -40,7 +40,9 @@ Team chooseTeam() {
         int num;
         std::cin >> num;
         if (!std::cin.fail()) {
-            if (num == 0 || num == 1) return static_cast<Team>(num);
+            if (num == std::to_underlying(Team::White) || num == std::to_underlying(Team::Black)) {
+                return static_cast<Team>(num);
+            }
         }
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

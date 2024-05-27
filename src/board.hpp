@@ -1,31 +1,26 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include <algorithm>
 #include <string>
 
-enum class Team : int;
-class Pos;
+#include "position.hpp"
+#include "team.hpp"
+
 namespace Board {
 const int size = 8;
+const Pos queenSideRook = {7, 0};
+const Pos queenSideKnight = {7, 1};
+const Pos queenSideBishop = {7, 2};
+const Pos queen = {7, 3};
+const Pos king = {7, 4};
+const Pos kingSideBishop = {7, 5};
+const Pos kingSideKnight = {7, 6};
+const Pos kingSideRook = {7, 7};
 void newGame(Team team);
 void movePiece(std::string start, std::string end, Team team);
 bool isPiecePresent(Pos pos);
 void printBoard();
 void printBoardWithNotation();
 }
-
-// Row, Column
-class Pos {
-    private:
-        int row;
-        int col;
-    public:
-        Pos(int row, int col)
-            : row{std::clamp(row, 0, Board::size - 1)}, col{std::clamp(col, 0, Board::size - 1)} {}
-        int getRow() const { return row; }
-        int getCol() const { return col; }
-        bool operator==(const Pos&) const = default;
-};
 
 #endif

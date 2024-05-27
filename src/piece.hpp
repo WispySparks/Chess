@@ -1,20 +1,12 @@
 #ifndef PIECE_HPP
 #define PIECE_HPP
 
-#include <utility>
 #include <vector>
 
-class Pos;
-enum class Team : int { White, Black, None };
-enum class Type : char {
-    Rook = 'R',
-    Knight = 'N',
-    Bishop = 'B',
-    Queen = 'Q',
-    King = 'K',
-    Pawn = 'P',
-    None = '-'
-};
+#include "position.hpp"
+#include "team.hpp"
+#include "type.hpp"
+
 class Piece {
     private:
         Team team;
@@ -30,9 +22,6 @@ class Piece {
         char getName() { return std::to_underlying(type); }
         void registerMove() { hasMoved = true; }
         std::vector<Pos> getMoves(Pos pos);
-};
-inline Team oppositeTeam(Team team) {
-    return (team == Team::White) ? Team::Black : Team::White;
 };
 
 #endif

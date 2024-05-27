@@ -75,11 +75,16 @@ std::vector<Pos> getQueenMoves(Pos pos) {
     return rookMoves;
 }
 
-std::vector<Pos> getKingMoves(Pos pos) {
+std::vector<Pos> getKingMoves(Pos pos, bool hasMoved) {
     std::vector<Pos> moves;
     for (int i = -1; i < 2; i++) {
         for (int j = -1; j < 2; j++) {
             moves.push_back(Pos{pos.getRow() + i, pos.getCol() + j});
+        }
+    }
+    if (!hasMoved) {
+        if (!Board::isPiecePresent(Board::kingSideBishop) &&
+            !Board::isPiecePresent(Board::kingSideKnight)) {
         }
     }
     return moves;
@@ -106,7 +111,7 @@ std::vector<Pos> Piece::getMoves(Pos pos) {
         case Type::Queen:
             return getQueenMoves(pos);
         case Type::King:
-            return getKingMoves(pos);
+            return getKingMoves(pos, hasMoved);
         case Type::Pawn:
             return getPawnMoves(pos, hasMoved);
         case Type::None:

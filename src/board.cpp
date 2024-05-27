@@ -6,9 +6,8 @@
 
 #include "piece.hpp"
 
-
-Piece* board[Board::size][Board::size];            // Row, Column
-Piece* empty = new Piece(Team::None, Type::None);  // Single Empty Instance
+Piece* board[Board::size][Board::size];             // Row, Column
+Piece* empty = new Piece(Team::White, Type::None);  // Single Empty Instance
 
 int fileToColumnIndex(char c) {
     return c - 'a';
