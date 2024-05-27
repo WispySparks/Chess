@@ -1,13 +1,16 @@
 #include "board.hpp"
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <limits>
+#include <memory>
 
 #include "piece.hpp"
 
-Piece* board[Board::size][Board::size];             // Row, Column
-Piece* empty = new Piece(Team::White, Type::None);  // Single Empty Instance
+std::array<std::array<std::shared_ptr<Piece>, Board::size>, Board::size> board;  // Row, Column
+std::shared_ptr<Piece> empty =
+    std::make_shared<Piece>(Team::White, Type::None);  // Single Empty Instance
 
 int fileToColumnIndex(char c) {
     return c - 'a';
@@ -18,10 +21,10 @@ int rankToRowIndex(char c) {
     return 7 - (c - '1');
 }
 
-void applyColor(std::string* str, int color) {
+void applyColor(std::string& str, int color) {
     std::string s = "\033[" + std::to_string(color) + "m";
-    str->insert(0, s);
-    str->append("\033[0m");
+    str.insert(0, s);
+    str.append("\033[0m");
 }
 
 bool isLegalMove(Piece piece, std::vector<Pos> moves, Pos pos, Team team) {
@@ -48,18 +51,18 @@ void Board::newGame() {
     }
     for (int i = 0; i < Board::size; i += 7) {
         Team team = (i == 0) ? Team::Black : Team::White;
-        board[i][0] = new Piece(team, Type::Rook);
-        board[i][1] = new Piece(team, Type::Knight);
-        board[i][2] = new Piece(team, Type::Bishop);
-        board[i][3] = new Piece(team, Type::Queen);
-        board[i][4] = new Piece(team, Type::King);
-        board[i][5] = new Piece(team, Type::Bishop);
-        board[i][6] = new Piece(team, Type::Knight);
-        board[i][7] = new Piece(team, Type::Rook);
+        board[i][0] = std::make_shared<Piece>(team, Type::Rook);
+        board[i][1] = std::make_shared<Piece>(team, Type::Knight);
+        board[i][2] = std::make_shared<Piece>(team, Type::Bishop);
+        board[i][3] = std::make_shared<Piece>(team, Type::Queen);
+        board[i][4] = std::make_shared<Piece>(team, Type::King);
+        board[i][5] = std::make_shared<Piece>(team, Type::Bishop);
+        board[i][6] = std::make_shared<Piece>(team, Type::Knight);
+        board[i][7] = std::make_shared<Piece>(team, Type::Rook);
     }
     for (int i = 0; i < Board::size; i++) {
-        board[1][i] = new Piece(Team::Black, Type::Pawn);
-        board[6][i] = new Piece(Team::White, Type::Pawn);
+        board[1][i] = std::make_shared<Piece>(Team::Black, Type::Pawn);
+        board[6][i] = std::make_shared<Piece>(Team::White, Type::Pawn);
     }
 }
 
@@ -68,7 +71,7 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
     int startRow = rankToRowIndex(start.at(1));
     int endCol = fileToColumnIndex(end.at(0));
     int endRow = rankToRowIndex(end.at(1));
-    Piece* piece = board[startRow][startCol];
+    std::shared_ptr<Piece> piece = board[startRow][startCol];
     std::vector<Pos> moves = getMoves(*this, *piece, Pos{startRow, startCol});
     std::cout << "Moves\n";
     for (auto p : moves) {
@@ -93,7 +96,7 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "Invalid Piece.\n";
             }
-            piece = new Piece(team, type);
+            piece = std::make_shared<Piece>(team, type);
         }
         board[endRow][endCol] = piece;
         board[startRow][startCol] = empty;
@@ -119,7 +122,7 @@ void printBoardWhite() {
             }
             std::string str;
             str += board[row][col]->getName();
-            if (board[row][col]->team == Team::Black) applyColor(&str, 34);
+            if (board[row][col]->team == Team::Black) applyColor(str, 34);
             std::cout << str << " ";
             if (col == 7) {
                 std::cout << (Board::size - row) << " ";
@@ -139,7 +142,7 @@ void printBoardBlack() {
             }
             std::string str;
             str += board[row][col]->getName();
-            if (board[row][col]->team == Team::Black) applyColor(&str, 34);
+            if (board[row][col]->team == Team::Black) applyColor(str, 34);
             std::cout << str << " ";
             if (col == 0) {
                 std::cout << (Board::size - row) << " ";
