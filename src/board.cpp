@@ -24,16 +24,13 @@ void applyColor(std::string* str, int color) {
     str->append("\033[0m");
 }
 
-bool isLegalMove(Piece* piece, std::vector<Pos> moves, Pos pos, Team team) {
-    if (piece == empty) {
-        std::cout << "No piece selected!\n";
-        return false;
-    }
-    if (piece->getTeam() != team) {
+bool isLegalMove(Piece piece, std::vector<Pos> moves, Pos pos, Team team) {
+    if (piece.team != team) {
         std::cout << "Wrong team!\n";
         return false;
     }
-    if (piece->getTeam() == board[pos.row][pos.col]->getTeam()) {
+    if (piece.team == board[pos.row][pos.col]->team &&
+        board[pos.row][pos.col]->type != Type::None) {
         std::cout << "Can't attack same team!\n";
         return false;
     }
@@ -42,16 +39,15 @@ bool isLegalMove(Piece* piece, std::vector<Pos> moves, Pos pos, Team team) {
     return legalMove;
 }
 
-void Board::newGame(Team playerteam) {
+void Board::newGame() {
     // Having a team here doesn't really make sense, the board can flip in the print function
-    Team opponentTeam = oppositeTeam(playerteam);
     for (int row = 2; row < 6; row++) {
         for (int col = 0; col < Board::size; col++) {
             board[row][col] = empty;
         }
     }
     for (int i = 0; i < Board::size; i += 7) {
-        Team team = (i == 0) ? opponentTeam : playerteam;
+        Team team = (i == 0) ? Team::Black : Team::White;
         board[i][0] = new Piece(team, Type::Rook);
         board[i][1] = new Piece(team, Type::Knight);
         board[i][2] = new Piece(team, Type::Bishop);
@@ -62,25 +58,21 @@ void Board::newGame(Team playerteam) {
         board[i][7] = new Piece(team, Type::Rook);
     }
     for (int i = 0; i < Board::size; i++) {
-        board[1][i] = new Piece(opponentTeam, Type::Pawn);
-        board[6][i] = new Piece(playerteam, Type::Pawn);
+        board[1][i] = new Piece(Team::Black, Type::Pawn);
+        board[6][i] = new Piece(Team::White, Type::Pawn);
     }
 }
 
-bool Board::isPiecePresent(Pos pos) {
-    return board[pos.row][pos.col]->getType() != Type::None;
-}
-
-void Board::movePiece(std::string start, std::string end, Team team) {
+bool Board::movePiece(std::string start, std::string end, Team team) {
     int startCol = fileToColumnIndex(start.at(0));
     int startRow = rankToRowIndex(start.at(1));
     int endCol = fileToColumnIndex(end.at(0));
     int endRow = rankToRowIndex(end.at(1));
     Piece* piece = board[startRow][startCol];
-    std::vector<Pos> moves = piece->getMoves(Pos{startRow, startCol});
-    if (isLegalMove(piece, moves, Pos{endRow, endCol}, team)) {
-        piece->registerMove();
-        if (piece->getType() == Type::Pawn && endRow == 0) {
+    std::vector<Pos> moves = getMoves(*this, *piece, Pos{startRow, startCol});
+    if (isLegalMove(*piece, moves, Pos{endRow, endCol}, team)) {
+        piece->moved = true;
+        if (piece->type == Type::Pawn && endRow == 0) {
             std::cout << "Pawn Promotion! Input a valid piece to be promoted to. (R, N, B, Q)\n";
             Type type = Type::None;
             while (true) {
@@ -101,35 +93,59 @@ void Board::movePiece(std::string start, std::string end, Team team) {
         }
         board[endRow][endCol] = piece;
         board[startRow][startCol] = empty;
-        printBoardWithNotation();
+        return true;
     }
+    return false;
 }
 
-void Board::printBoard() {
-    for (int i = 0; i < Board::size; i++) {
-        for (int j = 0; j < Board::size; j++) {
-            std::cout << board[i][j]->getName() << " ";
-        }
-        std::cout << "\n";
-    }
+bool Board::isPiecePresent(Pos pos) {
+    return board[pos.row][pos.col]->type != Type::None;
 }
 
-void Board::printBoardWithNotation() {
+void printBoardWhite() {
     std::cout << "  a b c d e f g h\n";
-    for (int i = 0; i < Board::size; i++) {
-        for (int j = 0; j < Board::size; j++) {
-            if (j == 0) {
-                std::cout << (Board::size - i) << " ";
+    for (int row = 0; row < Board::size; row++) {
+        for (int col = 0; col < Board::size; col++) {
+            if (col == 0) {
+                std::cout << (Board::size - row) << " ";
             }
             std::string str;
-            str += board[i][j]->getName();
-            if (board[i][j]->getTeam() == Team::Black) applyColor(&str, 34);
+            str += board[row][col]->getName();
+            if (board[row][col]->team == Team::Black) applyColor(&str, 34);
             std::cout << str << " ";
-            if (j == 7) {
-                std::cout << (Board::size - i) << " ";
+            if (col == 7) {
+                std::cout << (Board::size - row) << " ";
             }
         }
         std::cout << "\n";
     }
     std::cout << "  a b c d e f g h\n";
+}
+
+void printBoardBlack() {
+    std::cout << "  h g f e d c b a\n";
+    for (int row = Board::size - 1; row >= 0; row--) {
+        for (int col = Board::size - 1; col >= 0; col--) {
+            if (col == 7) {
+                std::cout << (Board::size - row) << " ";
+            }
+            std::string str;
+            str += board[row][col]->getName();
+            if (board[row][col]->team == Team::Black) applyColor(&str, 34);
+            std::cout << str << " ";
+            if (col == 0) {
+                std::cout << (Board::size - row) << " ";
+            }
+        }
+        std::cout << "\n";
+    }
+    std::cout << "  h g f e d c b a\n";
+}
+
+void Board::printBoardWithNotation(Team team) {
+    if (team == Team::White) {
+        printBoardWhite();
+    } else {
+        printBoardBlack();
+    }
 }

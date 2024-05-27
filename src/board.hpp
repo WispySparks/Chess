@@ -6,21 +6,22 @@
 #include "position.hpp"
 #include "team.hpp"
 
-namespace Board {
-const int size = 8;
-const Pos queenSideRook = {7, 0};
-const Pos queenSideKnight = {7, 1};
-const Pos queenSideBishop = {7, 2};
-const Pos queen = {7, 3};
-const Pos king = {7, 4};
-const Pos kingSideBishop = {7, 5};
-const Pos kingSideKnight = {7, 6};
-const Pos kingSideRook = {7, 7};
-void newGame(Team team);
-void movePiece(std::string start, std::string end, Team team);
-bool isPiecePresent(Pos pos);
-void printBoard();
-void printBoardWithNotation();
-}
+class Board {
+    public:
+        static constexpr int size = 8;
+        void newGame();
+        bool movePiece(std::string start, std::string end, Team team);
+        bool isPiecePresent(Pos pos);
+        void printBoardWithNotation(Team team);
+};
+
+constexpr Pos queenSideRook{7, 0};
+constexpr Pos queenSideKnight{7, 1};
+constexpr Pos queenSideBishop{7, 2};
+constexpr Pos queen{7, 3};
+constexpr Pos king{7, 4};
+constexpr Pos kingSideBishop{7, 5};
+constexpr Pos kingSideKnight{7, 6};
+constexpr Pos kingSideRook{7, 7};
 
 #endif

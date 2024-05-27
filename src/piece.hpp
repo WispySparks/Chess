@@ -1,27 +1,21 @@
 #ifndef PIECE_HPP
 #define PIECE_HPP
 
+#include <utility>
 #include <vector>
 
+#include "board.hpp"
 #include "position.hpp"
 #include "team.hpp"
 #include "type.hpp"
 
-class Piece {
-    private:
-        Team team;
-        Type type;
+struct Piece {
+        const Team team;
+        const Type type;
         bool moved = false;
-    public:
-        Piece(Team team, Type type) {
-            this->team = team;
-            this->type = type;
-        }
-        Team getTeam() { return team; }
-        Type getType() { return type; }
-        char getName() { return std::to_underlying(type); }
-        void registerMove() { moved = true; }
-        std::vector<Pos> getMoves(Pos pos);
+        char getName() const { return std::to_underlying(type); }
 };
+
+std::vector<Pos> getMoves(Board board, Piece piece, Pos pos);
 
 #endif
