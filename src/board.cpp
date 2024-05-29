@@ -8,6 +8,7 @@
 
 #include "piece.hpp"
 
+const int colorBlack = 34;
 std::array<std::array<std::shared_ptr<Piece>, Board::size>, Board::size> board;  // Row, Column
 std::shared_ptr<Piece> empty =
     std::make_shared<Piece>(Team::White, Type::None);  // Single Empty Instance
@@ -28,6 +29,9 @@ void applyColor(std::string& str, int color) {
 }
 
 std::shared_ptr<Piece> getPiece(Pos pos) {
+    if (pos.row < 0 || pos.row >= Board::size || pos.col < 0 || pos.col >= Board::size) {
+        std::cout << "Bad Pos! " << pos.row << ", " << pos.col << "\n";
+    }
     return board[pos.row][pos.col];
 }
 
@@ -88,7 +92,8 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
     // }
     if (isLegalMove(*piece, moves, endPos, team)) {
         piece->moved = true;
-        if (piece->type == Type::Pawn && endRow == 0) {
+        int finalRow = (piece->team == Team::White) ? 0 : Board::size - 1;
+        if (piece->type == Type::Pawn && endRow == finalRow) {
             std::cout << "Pawn Promotion! Input a valid piece to be promoted to. (R, N, B, Q)\n";
             Type type = Type::None;
             while (true) {
@@ -154,7 +159,7 @@ void printBoardWhite() {
             }
             std::string str;
             str += piece->getName();
-            if (piece->team == Team::Black) applyColor(str, 34);
+            if (piece->team == Team::Black) applyColor(str, colorBlack);
             std::cout << str << " ";
             if (col == 7) {
                 std::cout << (Board::size - row) << " ";

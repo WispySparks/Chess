@@ -1,6 +1,5 @@
 #include "piece.hpp"
 
-#include <algorithm>
 #include <vector>
 
 #include "board.hpp"
@@ -47,25 +46,29 @@ std::vector<Pos> getKnightMoves(Board board, Pos pos) {
 std::vector<Pos> getBishopMoves(Board board, Pos pos) {
     std::vector<Pos> moves;
     for (int col = pos.col + 1; col < Board::size; col++) {  // Right Down
-        int row = std::clamp(pos.row + (col - pos.col), 0, Board::size - 1);
+        int row = pos.row + (col - pos.col);
+        if (row < 0 || row >= Board::size) continue;
         Pos newPos{row, col};
         moves.push_back(newPos);
         if (board.isPiecePresent(newPos)) break;
     }
     for (int col = pos.col + 1; col < Board::size; col++) {  // Right Up
-        int row = std::clamp(pos.row - (col - pos.col), 0, Board::size - 1);
+        int row = pos.row - (col - pos.col);
+        if (row < 0 || row >= Board::size) continue;
         Pos newPos{row, col};
         moves.push_back(newPos);
         if (board.isPiecePresent(newPos)) break;
     }
     for (int col = pos.col - 1; col >= 0; col--) {  // Left Up
-        int row = std::clamp(pos.row + (col - pos.col), 0, Board::size - 1);
+        int row = pos.row + (col - pos.col);
+        if (row < 0 || row >= Board::size) continue;
         Pos newPos{row, col};
         moves.push_back(newPos);
         if (board.isPiecePresent(newPos)) break;
     }
     for (int col = pos.col - 1; col >= 0; col--) {  // Left Down
-        int row = std::clamp(pos.row - (col - pos.col), 0, Board::size - 1);
+        int row = pos.row - (col - pos.col);
+        if (row < 0 || row >= Board::size) continue;
         Pos newPos{row, col};
         moves.push_back(newPos);
         if (board.isPiecePresent(newPos)) break;
@@ -92,12 +95,16 @@ std::vector<Pos> getKingMoves(Board board, Pos pos) {
 
 std::vector<Pos> getPawnMoves(Board board, Piece piece, Pos pos) {
     std::vector<Pos> moves;
-    int increment = (piece.team == Team::White) ? -1 : 1;
-    Pos firstSquare{pos.row + increment, pos.col};
-    moves.push_back(firstSquare);
-    if (!piece.moved && !board.isPiecePresent(firstSquare)) {
-        moves.push_back({firstSquare.row + increment, pos.col});
-    }
+    int increment = (piece.team == Team::White) ? -1 : 1;  // Marching forward
+    Pos forwardsOne{pos.row + increment, pos.col};
+    Pos forwardsTwo{forwardsOne.row + increment, forwardsOne.col};
+    if (!board.isPiecePresent(forwardsOne)) moves.push_back(forwardsOne);
+    if (!piece.moved && !board.isPiecePresent(forwardsOne) && !board.isPiecePresent(forwardsTwo))
+        moves.push_back(forwardsTwo);
+    Pos left{forwardsOne.row, forwardsOne.col - 1};
+    Pos right{forwardsOne.row, forwardsOne.col + 1};
+    if (left.col >= 0 && board.isPiecePresent(left)) moves.push_back(left);
+    if (right.col < Board::size && board.isPiecePresent(right)) moves.push_back(right);
     return moves;
 }
 

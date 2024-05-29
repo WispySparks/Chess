@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     std::regex inputRegex = std::regex("^[a-h][1-8][a-h][1-8]$");
     std::string input;
     while (true) {
-        std::cout << "\n" << getTeamAsString(currentTeam) << "'s turn.";
+        std::cout << "\n" << teamToString(currentTeam) << "'s turn.";
         std::cout << "\nInput: ";
         std::cin >> input;
         if (input == "exit" || input == "quit") break;
@@ -45,4 +45,4 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
 }
 
-// TODO: Pawn diagonal attack, Checking and Checkmate, En Passant, Computer opponent, LAN Opponent
+// TODO: Checking and Checkmate, En Passant, Computer opponent, LAN Opponent

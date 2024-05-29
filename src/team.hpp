@@ -8,7 +8,7 @@ enum class Team : uint8_t { White = 0, Black = 1 };
 inline Team oppositeTeam(Team team) {
     return (team == Team::White) ? Team::Black : Team::White;
 };
-inline std::string getTeamAsString(Team team) {
+inline std::string teamToString(Team team) {
     return (team == Team::White) ? "White" : "Black";
 }
 
