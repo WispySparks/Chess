@@ -6,13 +6,14 @@
 #include "position.hpp"
 #include "team.hpp"
 
-class Piece;
+struct Piece;
 class Board {
     public:
         static constexpr int size = 8;
         void newGame();
         bool movePiece(std::string start, std::string end, Team team);
         bool castle(bool queenSide, Team team);
+        bool inCheck(Team team) const;
         bool isPiecePresent(Pos pos) const;
         void printBoardWithNotation(Team team) const;
         inline static Pos queenSideRook(Team team) {

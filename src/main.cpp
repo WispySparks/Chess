@@ -5,7 +5,7 @@
 #include "board.hpp"
 #include "team.hpp"
 
-int main(int argc, char* argv[]) {
+int main() {
     std::cout << "Welcome to Chess!\n";
     Board board = Board();
     Team currentTeam = Team::White;
@@ -15,6 +15,9 @@ int main(int argc, char* argv[]) {
     std::string input;
     while (true) {
         std::cout << "\n" << teamToString(currentTeam) << "'s turn.";
+        if (board.inCheck(currentTeam)) {
+            std::cout << "You're in check!";
+        }
         std::cout << "\nInput: ";
         std::cin >> input;
         if (input == "exit" || input == "quit") break;

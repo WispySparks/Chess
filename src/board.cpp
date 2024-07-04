@@ -120,6 +120,7 @@ bool Board::movePiece(std::string start, std::string end, Team team) {
 }
 
 bool Board::castle(bool queenSide, Team team) {
+    //! bugged!
     std::shared_ptr<Piece> king = getPiece(Board::king(team));
     std::shared_ptr<Piece> kingRook = getPiece(kingSideRook(team));
     std::shared_ptr<Piece> queenRook = getPiece(queenSideRook(team));
@@ -141,6 +142,19 @@ bool Board::castle(bool queenSide, Team team) {
         return true;
     }
     std::cout << "Can't Castle!\n";
+    return false;
+}
+
+bool Board::inCheck(Team team) const {
+    std::vector<Pos> moves;
+    for (int row = 0; row < Board::size; row++) {
+        for (int col = 0; col < Board::size; col++) {
+            Pos pos{row, col};
+            auto piece = getPiece(pos);
+            auto pieceMoves = piece->getMoves(*this, pos);
+            moves.insert(moves.end(), pieceMoves.begin(), pieceMoves.end());
+        }
+    }
     return false;
 }
 

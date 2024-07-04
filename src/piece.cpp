@@ -29,7 +29,7 @@ std::vector<Pos> getRookMoves(Board board, Pos pos) {
     return moves;
 }
 
-std::vector<Pos> getKnightMoves(Board board, Pos pos) {
+std::vector<Pos> getKnightMoves(Pos pos) {
     //* Squish this into loops
     std::vector<Pos> moves;
     moves.push_back({pos.row - 1, pos.col - 2});  // ULL
@@ -83,7 +83,7 @@ std::vector<Pos> getQueenMoves(Board board, Pos pos) {
     return rookMoves;
 }
 
-std::vector<Pos> getKingMoves(Board board, Pos pos) {
+std::vector<Pos> getKingMoves(Pos pos) {
     std::vector<Pos> moves;
     for (int i = -1; i < 2; i++) {
         for (int j = -1; j < 2; j++) {
@@ -113,13 +113,13 @@ std::vector<Pos> Piece::getMoves(Board board, Pos pos) {
         case Type::Rook:
             return getRookMoves(board, pos);
         case Type::Knight:
-            return getKnightMoves(board, pos);
+            return getKnightMoves(pos);
         case Type::Bishop:
             return getBishopMoves(board, pos);
         case Type::Queen:
             return getQueenMoves(board, pos);
         case Type::King:
-            return getKingMoves(board, pos);
+            return getKingMoves(pos);
         case Type::Pawn:
             return getPawnMoves(board, *this, pos);
         case Type::None:
